@@ -7,7 +7,7 @@ else
 fi
 
 if test -r "$QUOTE_FILE"; then
-  (echo "0"; cat "$QUOTE_FILE" | grep -n '^%$' | cut -f1 -d:) | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' | shuf -n 1 | xargs -I{} awk {} "$QUOTE_FILE" | fold -sw 80
+  (echo "0"; cat "$QUOTE_FILE" | grep -n '^%$' | cut -f1 -d:) | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' | shuf -n 1 | xargs -I{} awk 'END{print ""}'{} "$QUOTE_FILE" | fold -sw 80
 else
   echo "Error: Quote file is not readable. ($QUOTE_FILE)"
   exit 1
