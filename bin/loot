@@ -111,7 +111,10 @@ fi
 loot() {
   QUOTE_FILE="$1"
   if test -r "$QUOTE_FILE"; then
-    (echo "0"; cat "$QUOTE_FILE" | grep -n '^'"$input_delimiter"'$' | cut -f1 -d:) | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' | shuf -n 1 | xargs -I{} awk 'END{print "'"$output_delimiter"'"}'{} "$QUOTE_FILE" | fold -sw "$width"
+    (echo "0"; cat "$QUOTE_FILE" | grep -n '^'"$input_delimiter"'$' | cut -f1 -d:) \
+      | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' \
+      | shuf -n 1 | xargs -I{} awk 'END{print "'"$output_delimiter"'"}'{} "$QUOTE_FILE" \
+      | fold -sw "$width"
   else
     echo "ERROR: Quote file is not readable. ($QUOTE_FILE)"
     exit 1
