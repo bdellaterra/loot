@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+if test -d "$1"; then
+  QUOTE_FILE="$(find "$1" -type f -print0 | shuf -zn 1 | tr -d '\0')"
+else
+  QUOTE_FILE="$1"
+fi
+
+if test -r "$QUOTE_FILE"; then
+  (echo "0"; cat "$QUOTE_FILE" | grep -n '^%$' | cut -f1 -d:) | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' | shuf -n 1 | xargs -I{} awk {} "$QUOTE_FILE" | fold -sw 80
+else
+  echo "Error: Quote file is not readable. ($QUOTE_FILE)"
+  exit 1
+fi
+
+exit 0
