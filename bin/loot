@@ -1,23 +1,129 @@
 #!/usr/bin/env sh
 set -e
 
+# Set variable defaults
+number=1
+input_delimiter='%'
+output_delimiter='' # This produces a blank line after each item
+glob='*'
+width=80
+
+# Show help info
+usage() {
+cat <<USAGE
+usage: loot [options] [target file or directory]
+
+Print random quotes/text from within the target file/directory specified.
+By default entries are delimited by a line containing only the '%' character.
+The last entry must be terminated by the delimiter as well.
+
+Example: (quotes.txt)
+
+"All the world’s a stage, And all the men and women merely players;
+They have their exits and their entrances, And one man in his time plays many parts,"
+-- William Shakespeare
+%
+"Common sense is not so common."
+-- Voltaire
+%
+
+Options:
+
+--help,-h                Show this help text
+--number,-n              Number of random entries to print (Default 1)
+--input-delimiter,-i     Delimiter separating entries within the text file(s) (Default '%')
+--output-delimiter,-o    Delimiter separating printed entries (Default '' for a blank line)
+--glob,-g                Glob pattern for matching files within a target directory (All files by default)
+--width,-w               Number of columns until output is forced to line-wrap (Default 80)
+USAGE
+}
+
+# Parse command line options/arguments
+while :; do
+  case $1 in
+    -h|--help)
+      usage
+      exit
+      ;;
+    -n|--number)
+      if [ -n "$2" ]; then
+        number="$2"
+        shift
+      else
+        printf 'ERROR: "--number" requires an integer argument.\n' >&2
+        exit 1
+      fi
+      ;;
+    -i|--input-delimiter)
+      if [ -n "$2" ]; then
+        input_delimiter="$2"
+        shift
+      else
+        printf 'ERROR: "--input-delimiter" requires a string argument.\n' >&2
+        exit 1
+      fi
+      ;;
+    -o|--output-delimiter)
+      if [ -n "$2" ]; then
+        output_delimiter="$2"
+        shift
+      else
+        printf 'ERROR: "--ouptut-delimiter" requires a string argument.\n' >&2
+        exit 1
+      fi
+      ;;
+    -g|--glob)
+      if [ -n "$2" ]; then
+        glob="$2"
+        shift
+      else
+        printf 'ERROR: "--glob" requires a string argument.\n' >&2
+        exit 1
+      fi
+      ;;
+    -w|--width)
+      if [ -n "$2" ]; then
+        width="$2"
+        shift
+      else
+        printf 'ERROR: "--width" requires an integer argument.\n' >&2
+        exit 1
+      fi
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -?*)
+      printf 'WARNING: Unknown option ignores: %s\n' "$1" >&2
+      ;;
+    *)
+      break
+  esac
+
+  shift
+done
+
+if test $# -gt 1; then
+  printf 'WARNING: Only the first target file/directory will be used: %s\n' "$1" >&2
+fi
+
 loot() {
   QUOTE_FILE="$1"
   if test -r "$QUOTE_FILE"; then
-    (echo "0"; cat "$QUOTE_FILE" | grep -n '^%$' | cut -f1 -d:) | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' | shuf -n 1 | xargs -I{} awk 'END{print ""}'{} "$QUOTE_FILE" | fold -sw 80
+    (echo "0"; cat "$QUOTE_FILE" | grep -n '^'"$input_delimiter"'$' | cut -f1 -d:) | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' | shuf -n 1 | xargs -I{} awk 'END{print "'"$output_delimiter"'"}'{} "$QUOTE_FILE" | fold -sw "$width"
   else
-    echo "Error: Quote file is not readable. ($QUOTE_FILE)"
+    echo "ERROR: Quote file is not readable. ($QUOTE_FILE)"
     exit 1
   fi
 }
 
-
 if test -d "$1"; then
-  for RANDOM_FILE in $(find "$1" -type f | shuf -rn 3); do
+  for RANDOM_FILE in $(find "$1" -type f -iname "$glob" | shuf -rn "$number"); do
     loot "$RANDOM_FILE"
   done
 else
-  for SINGLE_FILE in $(echo "$1" | shuf -rn 3); do
+  for SINGLE_FILE in $(echo "$1" | shuf -rn "$number"); do
     loot "$SINGLE_FILE"
   done
 fi
