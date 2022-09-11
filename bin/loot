@@ -142,11 +142,18 @@ loot() {
 }
 
 if test -d "$1"; then
-  find "$1" -type f -iname "$glob" -print0 | 2>/dev/null shuf -zrn "$number" | while read -d $'\0' RANDOM_FILE; do
+  # Sending `shuf` error "no lines to repeat" to /dev/null. Occurs when glob matches no files
+  find "$1" -type f -iname "$glob" -print0 \
+    | 2>/dev/null shuf -zrn "$number" \
+    | while read -d $'\0' RANDOM_FILE
+  do
     loot "$RANDOM_FILE"
   done
 else
-  printf '%b' "$1\0" | shuf -zrn "$number" | while read -d $'\0' SINGLE_FILE; do
+  printf '%b' "$1\0" \
+    | shuf -zrn "$number" \
+    | while read -d $'\0' SINGLE_FILE
+  do
     loot "$SINGLE_FILE"
   done
 fi
