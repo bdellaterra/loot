@@ -113,6 +113,11 @@ while :; do
   shift
 done
 
+if test $# -lt 1; then
+  printf 'ERROR: Please specify a target file or directory\n' >&2
+  exit 1
+fi
+
 if test $# -gt 1; then
   printf 'WARNING: Only the first target file/directory will be used (%s)\n' "$1" >&2
 fi
@@ -132,7 +137,7 @@ loot() {
       | fold -sw "$width"
   else
     echo "ERROR: Quote file is not readable. ($QUOTE_FILE)"
-    exit 1
+    exit 2
   fi
 }
 
