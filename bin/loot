@@ -120,9 +120,14 @@ fi
 loot() {
   QUOTE_FILE="$1"
   if test -r "$QUOTE_FILE"; then
+    # Print zero then grep the line number of each occurrence of the input delimiter (%)
+    # Use sed to double all line numbers except the first/last and create line ranges for awk
+    # Randomize the line ranges to print random quotes using xargs/awk
+    # Finally wrap long lines (truncating at spaces) based on max column width
     (echo "0"; cat "$QUOTE_FILE" | grep -n '^'"$input_delimiter"'$' | cut -f1 -d:) \
-      | sed ':begin;$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' \
-      | shuf -n 1 | xargs -I{} awk 'END{print "'"$output_delimiter"'"}'{} "$QUOTE_FILE" \
+      | sed -e '2,$ s/\(.*\)/\1\n\1/' \
+      | sed -e '$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' -e '$d' \
+      | shuf -n 1 | xargs -I{} awk 'END{print "'"$output_delimiter"'"};'{} "$QUOTE_FILE" \
       | fold -sw "$width"
   else
     echo "ERROR: Quote file is not readable. ($QUOTE_FILE)"
