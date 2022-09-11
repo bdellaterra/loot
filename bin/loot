@@ -13,18 +13,18 @@ usage() {
 cat <<USAGE
 usage: loot [options] [target file or directory]
 
-Print random quotes/text from within the target file/directory specified.
+Print random quotes or text from within the target file/directory specified.
 By default entries are delimited by a line containing only the '%' character.
 The last entry must be terminated by the delimiter as well.
 
 Example: (quotes.txt)
 
-"All the world’s a stage, And all the men and women merely players;
-They have their exits and their entrances, And one man in his time plays many parts,"
--- William Shakespeare
+"One original thought is worth a thousand mindless quotings."
+ -- Diogenes
 %
-"Common sense is not so common."
--- Voltaire
+"You'll find your fortune fallin' all over town
+ Be sure that your umbrella is up-up-up-up-up-upside down"
+ -- Louis Prima
 %
 
 Options:
@@ -95,7 +95,7 @@ while :; do
       break
       ;;
     -?*)
-      printf 'WARNING: Unknown option ignores: %s\n' "$1" >&2
+      printf 'WARNING: Unknown option ignored (%s)\n' "$1" >&2
       ;;
     *)
       break
@@ -105,7 +105,7 @@ while :; do
 done
 
 if test $# -gt 1; then
-  printf 'WARNING: Only the first target file/directory will be used: %s\n' "$1" >&2
+  printf 'WARNING: Only the first target file/directory will be used (%s)\n' "$1" >&2
 fi
 
 loot() {
