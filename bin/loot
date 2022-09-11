@@ -1,4 +1,13 @@
 #!/usr/bin/env sh
+
+# File:         loot
+# Description:  A shell script to print random quotations, fortunes, etc. from a specified path
+# Author:       Brian Dellatera <github.com/bdellaterra>
+# Version:      0.1.1
+# License:      Copyright 2022 Brian Dellaterra.
+#               Distributed under the terms of the European Union Public License v. 1.2
+#               See the file LICENSE
+
 set -e
 
 # Set variable defaults
