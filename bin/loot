@@ -127,7 +127,8 @@ loot() {
     (echo "0"; cat "$QUOTE_FILE" | grep -n '^'"$input_delimiter"'$' | cut -f1 -d:) \
       | sed -e '2,$ s/\(.*\)/\1\n\1/' \
       | sed -e '$!N;s/^\(.*\)\n\(.*\)/NR>\1\&\&NR<\2/g' -e '$d' \
-      | shuf -n 1 | xargs -I{} awk 'END{print "'"$output_delimiter"'"};'{} "$QUOTE_FILE" \
+      | shuf -n 1 \
+      | xargs -I{} awk 'END{print "'"$output_delimiter"'"};'{} "$QUOTE_FILE" \
       | fold -sw "$width"
   else
     echo "ERROR: Quote file is not readable. ($QUOTE_FILE)"
@@ -136,7 +137,7 @@ loot() {
 }
 
 if test -d "$1"; then
-  find "$1" -type f -iname "$glob" -print0 | shuf -zrn "$number" | while read -d $'\0' RANDOM_FILE; do
+  find "$1" -type f -iname "$glob" -print0 | xargs -r shuf -zrn "$number" | while read -d $'\0' RANDOM_FILE; do
     loot "$RANDOM_FILE"
   done
 else
