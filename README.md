@@ -4,8 +4,8 @@ Loot
 
 I wrote `loot` as a replacement for the `fortune` command, to avoid needing
 to run manual commands with root access to update my quotation files.
-This relies on some GNU `coreutils` such as `shuf`. You may find it useful
-for printing other random text besides quotations, just bear in mind
+This script relies on some GNU `coreutils` such as `shuf`. You may find it
+useful for printing other random text besides quotations, just bear in mind
 it has not been heavily tested.
 
 Usage
