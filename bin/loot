@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # File:         loot
 # Description:  A shell script to print random quotations, fortunes, etc. from a specified path
