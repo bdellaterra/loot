@@ -146,7 +146,7 @@ loot() {
 
 if test -d "$1"; then
   # Sending `shuf` error "no lines to repeat" to /dev/null. Occurs when glob matches no files
-  find "$1" -type f -iname "$glob" -print0 \
+  find -L "$1" -type f -iname "$glob" -print0 \
     | 2>/dev/null shuf -zrn "$number" \
     | while read -d $'\0' RANDOM_FILE
   do
