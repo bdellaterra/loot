@@ -19,7 +19,7 @@ width=80
 
 # Show help info
 usage() {
-cat <<USAGE
+  cat <<USAGE
 usage: loot [options] [target file or directory]
 
 Print random quotes or text from within the target file/directory specified.
